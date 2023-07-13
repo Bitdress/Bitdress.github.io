@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bitdress</title>
+    <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/800px-Bitcoin.svg.png">
+  <style>
+    /* Add the desired font family */
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+    /* Apply the font family to all elements */
+    * {
+      font-family: 'Roboto', sans-serif;
+    }
+
+    /* Styling for the website title, divs, and buttons */
+    h1 {
+      color: #F7931A;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .counter {
+      display: inline-block;
+      width: 200px;
+      height: 100px;
+      padding: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      border-radius: 10px; /* Rounded corners */
+    }
+
+    .container {
+      text-align: center;
+      margin-top: 50px; /* Adjust as needed */
+    }
+
+    .count {
+      color: #F7931A;
+      font-size: 24px;
+    }
+
+    .product {
+      display: inline-block;
+      width: 200px;
+      padding: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      margin-right: 10px;
+      border-radius: 10px; /* Rounded corners */
+    }
+
+    .buy-button {
+      background-color: #F7931A;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 50px; /* Rounded shape */
+      transition: background-color 0.3s; /* Transition effect */
+    }
+
+    .buy-button:hover {
+      background-color: #A46111; /* Darkened purple */
+    }
+
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1;
+    }
+
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 400px;
+      padding: 20px;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      border-radius: 10px;
+      z-index: 2;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 20px;
+      background-color: #f0f0f0;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+
+    .progress {
+      width: 0%;
+      height: 100%;
+      background-color: #F7931A;
+      border-radius: 10px;
+      transition: width 1s;
+    }
+
+    .message {
+      color: #F7931A;
+      margin-top: 10px;
+    }
+
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 20px;
+      height: 20px;
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+    }
+
+    .close-button:before,
+    .close-button:after {
+      content: "";
+      position: absolute;
+      top: 10px;
+      left: 0;
+      width: 20px;
+      height: 2px;
+      background-color: #888;
+    }
+
+    .close-button:before {
+      transform: rotate(45deg);
+    }
+
+    .close-button:after {
+      transform: rotate(-45deg);
+    }
+  </style>
+</head>
+<body>
+  <h1>Bitdress</h1>
+
+  <div class="container">
+    <div class="counter">
+      <h2>Users Online</h2>
+      <div class="count" id="usersCount"></div>
+    </div>
+    <div class="counter">
+      <h2>Stock</h2>
+      <div class="count">50K+</div>
+    </div>
+    <div class="counter">
+      <h2>Orders</h2>
+      <div class="count">20</div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="product">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/800px-Bitcoin.svg.png" alt="Product 1" height="50" width="50">
+      <h3>$100+ BTC Wallet</h3>
+      <p>$4.99</p>
+      <button class="buy-button">Buy Now</button>
+    </div>
+    <div class="product">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/800px-Bitcoin.svg.png" alt="Product 2" height="50" width="50">
+      <h3>$500+ BTC Wallet</h3>
+      <p>$14.99</p>
+      <button class="buy-button">Buy Now</button>
+    </div>
+    <div class="product">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/800px-Bitcoin.svg.png" alt="Product 3" height="50" width="50">
+      <h3>$1000+ BTC Wallet</h3>
+      <p>$24.99</p>
+      <button class="buy-button">Buy Now</button>
+    </div>
+  </div>
+
+  <script>
+    var minCount = 10; // Minimum value for the counter
+    var maxCount = 1000; // Maximum value for the counter
+
+    // Generate a random number between minCount and maxCount
+    var usersOnline = Math.floor(Math.random() * (maxCount - minCount + 1)) + minCount;
+
+    // Format the number with commas
+    var formattedCount = usersOnline.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+    // Display the formatted number in the "Users Online" counter
+    document.getElementById("usersCount").textContent = formattedCount;
+
+    var popup;
+    var overlay;
+
+    // Function to open the popup
+    function openPopup() {
+      // Create the overlay
+      overlay = document.createElement("div");
+      overlay.className = "popup-overlay";
+
+      // Create the popup div
+      popup = document.createElement("div");
+      popup.className = "popup";
+      popup.innerHTML = '<div id="progressContainer">' +
+                          '<div id="pleaseWait">Please Wait...</div>' +
+                          '<div class="progress-bar">' +
+                            '<div class="progress"></div>' +
+                          '</div>' +
+                          '<div class="message">Order in Progress</div>' +
+                          '<button class="close-button" onclick="closePopup()"></button>' +
+                        '</div>';
+
+      // Append the overlay and popup to the body
+      document.body.appendChild(overlay);
+      document.body.appendChild(popup);
+
+      // Progress bar animation
+      var progressBar = document.querySelector(".progress");
+      var progressContainer = document.getElementById("progressContainer");
+      var percent = 0;
+      var intervalId = setInterval(fillProgressBar, 35);
+
+      function fillProgressBar() {
+        if (percent >= 100) {
+          clearInterval(intervalId);
+          document.getElementById("pleaseWait").textContent = "Order Complete!";
+          setTimeout(function() {
+            var address = generateRandomString(26, 35);
+            var addressElement = document.createElement("div");
+            addressElement.textContent = "Address: " + address;
+            popup.appendChild(addressElement);
+          }, 3000);
+        } else {
+          percent++;
+          progressBar.style.width = percent + "%";
+        }
+      }
+
+      function generateRandomString(minLength, maxLength) {
+        var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        var length = Math.floor(Math.random() * (maxLength - minLength + 1)) + minLength;
+        var result = "";
+        for (var i = 0; i < length; i++) {
+          var randomIndex = Math.floor(Math.random() * characters.length);
+          result += characters.charAt(randomIndex);
+        }
+        return result;
+      }
+    }
+
+    // Function to close the popup
+    function closePopup() {
+      if (popup && overlay) {
+        document.body.removeChild(popup);
+        document.body.removeChild(overlay);
+        popup = null;
+        overlay = null;
+      }
+    }
+
+    // Add event listeners to the "Buy Now" buttons
+    var buyButtons = document.getElementsByClassName("buy-button");
+    for (var i = 0; i < buyButtons.length; i++) {
+      buyButtons[i].addEventListener("click", openPopup);
+    }
+  </script>
+
+</body>
+</html>
